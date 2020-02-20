@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <variable
+            name="data"
+            type="kr.co.chience.envroadwithmvvm.model.Data" />
+
+        <variable
+            name="dataViewModel"
+            type="kr.co.chience.envroadwithmvvm.viewmodel.MainViewModel" />
+
+    </data>
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textview_cdc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.cdc}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_mic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.mic}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_voc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.voc}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_co2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.co2}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_temp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.temp}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_att"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.att}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_humInt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@{data.humInt}"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_humDec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{data.humDec}"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</layout>
