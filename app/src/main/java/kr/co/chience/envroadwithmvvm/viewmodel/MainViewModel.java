@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
@@ -19,6 +20,7 @@ import com.neovisionaries.bluetooth.ble.advertising.ADStructure;
 import com.neovisionaries.bluetooth.ble.advertising.IBeacon;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import kr.co.chience.envroadwithmvvm.model.Data;
@@ -52,20 +54,33 @@ public class MainViewModel extends ViewModel {
 
 
     public void stratScan() {
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-        ScanSettings.Builder builder = new ScanSettings.Builder();
-        builder.setScanMode((ScanSettings.SCAN_MODE_LOW_LATENCY));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            builder.setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE);
-        }
-        ScanSettings settings = builder.build();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBluetoothLeScanner.startScan(null, settings, mScanCallback);
+        try {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+            ScanFilter.Builder sbuilder = new ScanFilter.Builder();
+            sbuilder.setManufacturerData(0x004c, new byte[]{});
+            ScanFilter filter = sbuilder.build();
+
+            ScanSettings.Builder builder = new ScanSettings.Builder();
+            List<ScanFilter> filters = Collections.singletonList(filter/*new ScanFilter.Builder().build()*/);
+
+            builder.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                builder.setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE);
+            }
+
+            ScanSettings settings = builder.build();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mBluetoothLeScanner.startScan(filters, settings, mScanCallback);
+            } else {
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
+            }
+            LogUtil.e(TAG, "Scan Start ::::::: ");
+        } catch (Exception e) {
+            LogUtil.e(TAG, e.getLocalizedMessage());
         }
 
-        LogUtil.e(TAG, "Scan Start ::::::: ");
     }
 
     public void stopScan() {
@@ -73,8 +88,9 @@ public class MainViewModel extends ViewModel {
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
             mBluetoothLeScanner.stopScan(mScanCallback);
+        } else {
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
-
         LogUtil.e(TAG, "Scan Stop ::::::: ");
     }
 
@@ -97,6 +113,7 @@ public class MainViewModel extends ViewModel {
                     humInt = PacketUtil.humInt(uuid);
                     humDec = PacketUtil.humDec(uuid);
                     setData();
+                    LogUtil.e(TAG, uuid);
                 }
 
             } catch (Exception e) {
@@ -119,4 +136,22 @@ public class MainViewModel extends ViewModel {
         }
     };
 
+    BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+            uuid = ScanUtil.bluetoothScan(scanRecord, proximity);
+            if (uuid != null && !uuid.isEmpty()) {
+                cdc = PacketUtil.cdc(uuid);
+                mic = PacketUtil.mic(uuid);
+                voc = PacketUtil.voc(uuid);
+                co2 = PacketUtil.co2(uuid);
+                temp = PacketUtil.temp(uuid);
+                att = PacketUtil.att(uuid);
+                humInt = PacketUtil.humInt(uuid);
+                humDec = PacketUtil.humDec(uuid);
+                setData();
+                LogUtil.e(TAG, uuid);
+            }
+        }
+    };
 }
