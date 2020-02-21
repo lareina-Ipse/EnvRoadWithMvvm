@@ -6,13 +6,12 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
-import android.view.View;
 
 import kr.co.chience.envroadwithmvvm.adapter.DataAdapter;
 import kr.co.chience.envroadwithmvvm.databinding.ActivityMainBinding;
 import kr.co.chience.envroadwithmvvm.viewmodel.MainViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,19 +22,20 @@ public class MainActivity extends AppCompatActivity {
 
         final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-
-     //   viewModel.setData();
         viewModel.getData().observe(this, data -> binding.recyclerView.setAdapter(new DataAdapter(data, viewModel)));
 
+//        viewModel.setData();
         binding.setDataViewModel(viewModel);
 
 
         binding.buttonStart.setOnClickListener(v -> {
             viewModel.stratScan();
+
         });
 
         binding.buttonEnd.setOnClickListener(v -> viewModel.stopScan());
 
 
     }
+
 }
